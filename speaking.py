@@ -1,7 +1,7 @@
-import requests
+
 from elevenlabs import clone, generate, play
 import elevenlabs
-elevenlabs.set_api_key("8b937b9e5eccf5758db8ef7444d115b5")
+elevenlabs.set_api_key("") #insert api key
 voices = elevenlabs.voices()
 lexvoice = voices[-1]
 

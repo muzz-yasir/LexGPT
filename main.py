@@ -4,6 +4,8 @@ import numpy as np
 from openai import OpenAI
 import time
 
+import elevenlabs
+
 transcriber = pipeline("automatic-speech-recognition", model="openai/whisper-base.en")
 
 """OpenAI client, thread, assistant and run functions"""
@@ -11,7 +13,7 @@ def create_client():
     client = OpenAI(api_key=OPENAI_API_KEY)
     return client
 
-def create_assitant(client):
+def create_assistant(client):
     # Create assistant and thread (should persist)
     assistant = client.beta.assistants.create(
         name="Math Tutor",
@@ -60,9 +62,9 @@ def main(audio):
     lex_response_audio = get_lex_response_audio(response)
     return lex_response_audio, response
 
-def get_lex_response_audio(input):
-    """Create Lex Audio transcription"""
-    return None
+def get_lex_response_audio(text_input):
+    audio = elevenlabs.generate(text=text_input, voice=LEXVOICE)
+    return audio
 
 demo = gr.Interface(
     main,
@@ -75,8 +77,14 @@ if __name__ == "__main__":
     OPENAI_API_KEY='' #insert key here
     client = create_client()
     print(f'client: {client}')
-    assistant = create_assitant(client)
+    assistant = create_assistant(client)
     print(f'assistant: {assistant}')
     thread = create_thread(client, assistant)
     print(f'thread: {thread}')
+
+    #set elevenlabs api
+    elevenlabs.set_api_key("") #insert key here
+    voices = elevenlabs.voices()
+    LEXVOICE = voices[-1]
+
     demo.launch()  # Launches the Gradio app
