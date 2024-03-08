@@ -1,4 +1,5 @@
 import requests
+from elevenlabs import clone, generate, play
 
 CHUNK_SIZE = 1024
 url = "https://api.elevenlabs.io/v1/text-to-speech/2EiwWnXFnvU5JabPnv8n"
