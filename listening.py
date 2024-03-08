@@ -12,8 +12,24 @@ def transcribe(audio):
     return transcriber({"sampling_rate": sr, "raw": y})["text"]
 
 def prompt(audio):
-    text = transcribe(audio)
-    return text+'testing____'
+    input = transcribe(audio)
+    lex_response = get_lex_response(input)
+    lex_response_audio = get_lex_response_audio(lex_response)
+
+
+
+    return input
+
+
+def get_lex_response(input):
+    """Call Lex Fridman GPT API"""
+
+
+
+def get_lex_response_audio(input):
+    """Get Lex Audio transcription"""
+
+
 
 demo = gr.Interface(
     prompt,
