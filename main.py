@@ -3,7 +3,8 @@ from transformers import pipeline
 import numpy as np
 from openai import OpenAI
 import time
-
+import os
+import replicate
 import elevenlabs
 
 transcriber = pipeline("automatic-speech-recognition", model="openai/whisper-base.en")
@@ -38,11 +39,24 @@ def run_prompt(client, assistant, thread, input):
     time.sleep(2)
 
 def view_response(client, thread):
-    messages_response = client.beta.threads.messages.list(thread_id=thread.id)
-    print(f'messages_response:{messages_response}')
-    messages = messages_response.data
-    print(f'messages:{messages}')
-    response = messages[0].content[0].text.value
+    message= False
+    response = None
+    
+    while not message:
+        messages_response = client.beta.threads.messages.list(thread_id=thread.id)
+        print(f'messages_response:{messages_response}')
+        print(message.role for message in messages_response.data)
+        message_count = len([message for message in messages_response.data if message.role == 'user'])
+        gpt_messages = [message for message in messages_response.data if message.role != 'user']
+
+        print(f'messages:{gpt_messages}')
+        if len(gpt_messages) == message_count:
+            try:
+                response = gpt_messages[0].content[0].text.value
+                message = True
+            except:
+                time.sleep(1)
+
     print(f'response:{response}')
     return response
 
@@ -60,21 +74,44 @@ def main(audio):
     run_prompt(client, assistant, thread, input)
     response = view_response(client, thread)
     lex_response_audio = get_lex_response_audio(response)
-    return lex_response_audio, response
+    with open("response.mp3",'wb') as f:
+        f.write(lex_response_audio)
+    lex_response_video = get_lex_response_video(lex_response_audio)
+    return lex_response_audio, response, lex_response_video
 
 def get_lex_response_audio(text_input):
     audio = elevenlabs.generate(text=text_input, voice=LEXVOICE)
     return audio
 
+def get_lex_response_video(audio):
+    image= open('podcastcover.jpg', "rb")
+    audio= open('response.mp3', "rb")
+    output = replicate.run(
+    "cjwbw/dreamtalk:c52a2bad8c0bdf9645609de071dddb1ddab0b396b8bf7096027819473a85b4ca",
+    input={
+        "pose": "data/pose/RichardShelby_front_neutral_level1_001.mat",
+        "audio": audio,
+        "image": image,
+        "crop_image": True,
+        "style_clip": "data/style_clip/3DMM/M030_front_neutral_level1_001.mat",
+        "max_gen_len": 1000,
+        "num_inference_steps": 10
+    }
+    )
+    return output
+
 demo = gr.Interface(
     main,
     gr.Audio(sources=["microphone"]),
-    [gr.Audio(), "text"],
+    [gr.Audio(), "text", gr.Video()],
+    live=True
 )
 
 if __name__ == "__main__":
+    OPENAI_API_KEY='' 
+    REPLICATE_API_TOKEN=''
+    os.environ["REPLICATE_API_TOKEN"] = REPLICATE_API_TOKEN
     # Create OpenAI client and thread to persist throughout session
-    OPENAI_API_KEY='' #insert key here
     client = create_client()
     print(f'client: {client}')
     assistant = create_assistant(client)
@@ -82,7 +119,6 @@ if __name__ == "__main__":
     thread = create_thread(client, assistant)
     print(f'thread: {thread}')
 
-    #set elevenlabs api
     elevenlabs.set_api_key("") #insert key here
     voices = elevenlabs.voices()
     LEXVOICE = voices[-1]
