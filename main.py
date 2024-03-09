@@ -5,6 +5,10 @@ from openai import OpenAI
 import time
 import os
 import replicate
+import requests
+import json
+import os
+MESSAGE_COUNT = 0
 import elevenlabs
 
 transcriber = pipeline("automatic-speech-recognition", model="openai/whisper-base.en")
@@ -36,9 +40,26 @@ def run_prompt(client, assistant, thread, input):
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
         assistant_id=assistant.id)
-    time.sleep(2)
 
 def view_response(client, thread):
+    message= False
+    response = None
+    
+    while not message:
+        messages_response = client.beta.threads.messages.list(thread_id=thread.id)
+        print(f'messages_response:{messages_response}')
+        print(message.role for message in messages_response.data)
+        message_count = len([message for message in messages_response.data if message.role == 'user'])
+        gpt_messages = [message for message in messages_response.data if message.role != 'user']
+
+        print(f'messages:{gpt_messages}')
+        if len(gpt_messages) == message_count:
+            try:
+                response = gpt_messages[0].content[0].text.value
+                message = True
+            except:
+                time.sleep(1)
+
     message= False
     response = None
     
@@ -122,5 +143,9 @@ if __name__ == "__main__":
     elevenlabs.set_api_key("") #insert key here
     voices = elevenlabs.voices()
     LEXVOICE = voices[-1]
+
+    #api for animation (GOOEY.AI)
+
+    GOOEY_API_KEY = ""
 
     demo.launch()  # Launches the Gradio app
