@@ -1,4 +1,4 @@
-api_key = "sk-F1gcRQFHNabvwORJrlAvYkpnFjGrJUlptcwdmKNRmSFtN5QW"
+api_key = ""
 
 import os
 import requests
