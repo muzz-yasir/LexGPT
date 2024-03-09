@@ -3,7 +3,10 @@ from transformers import pipeline
 import numpy as np
 from openai import OpenAI
 import time
-
+import requests
+import json
+import os
+MESSAGE_COUNT = 0
 import elevenlabs
 
 transcriber = pipeline("automatic-speech-recognition", model="openai/whisper-base.en")
@@ -35,14 +38,26 @@ def run_prompt(client, assistant, thread, input):
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
         assistant_id=assistant.id)
-    time.sleep(2)
 
 def view_response(client, thread):
-    messages_response = client.beta.threads.messages.list(thread_id=thread.id)
-    print(f'messages_response:{messages_response}')
-    messages = messages_response.data
-    print(f'messages:{messages}')
-    response = messages[0].content[0].text.value
+    message= False
+    response = None
+    
+    while not message:
+        messages_response = client.beta.threads.messages.list(thread_id=thread.id)
+        print(f'messages_response:{messages_response}')
+        print(message.role for message in messages_response.data)
+        message_count = len([message for message in messages_response.data if message.role == 'user'])
+        gpt_messages = [message for message in messages_response.data if message.role != 'user']
+
+        print(f'messages:{gpt_messages}')
+        if len(gpt_messages) == message_count:
+            try:
+                response = gpt_messages[0].content[0].text.value
+                message = True
+            except:
+                time.sleep(1)
+
     print(f'response:{response}')
     return response
 
@@ -60,31 +75,65 @@ def main(audio):
     run_prompt(client, assistant, thread, input)
     response = view_response(client, thread)
     lex_response_audio = get_lex_response_audio(response)
-    return lex_response_audio, response
+    with open("response.mp3",'wb') as f:
+        f.write(lex_response_audio)
+    
+    lex_response_video = get_lex_response_video(audio="response.mp3",image="lex_image.png")
+
+    return lex_response_video, response
 
 def get_lex_response_audio(text_input):
     audio = elevenlabs.generate(text=text_input, voice=LEXVOICE)
     return audio
 
+def get_lex_response_video(audio,image):
+    
+    
+    files = [
+        ("input_face", open(image, "rb")),
+        ("input_audio", open(audio, "rb")),
+    ]
+    payload = {}
+    response = requests.post(
+        "https://api.gooey.ai/v2/Lipsync/form/",
+        headers={
+            "Authorization": "Bearer " + GOOEY_API_KEY,
+        },
+        files=files,
+        data={"json": json.dumps(payload)},
+    )
+    assert response.ok, response.content
+
+    result = response.json()
+    #vid = requests.get(result["output"]["output_video"], allow_redirects=True).content
+    video_url = result["output"]["output_video"]
+    print(video_url)
+    return video_url
+
 demo = gr.Interface(
     main,
     gr.Audio(sources=["microphone"]),
-    [gr.Audio(), "text"],
+    [gr.Video(),"text"],
+    live=True
 )
 
 if __name__ == "__main__":
     # Create OpenAI client and thread to persist throughout session
-    OPENAI_API_KEY='' #insert key here
+    OPENAI_API_KEY='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' #insert key here
     client = create_client()
     print(f'client: {client}')
     assistant = create_assistant(client)
     print(f'assistant: {assistant}')
     thread = create_thread(client, assistant)
     print(f'thread: {thread}')
-
+    
     #set elevenlabs api
-    elevenlabs.set_api_key("") #insert key here
+    elevenlabs.set_api_key("8b937b9e5eccf5758db8ef7444d115b5") #insert key here
     voices = elevenlabs.voices()
     LEXVOICE = voices[-1]
+
+    #api for animation (GOOEY.AI)
+
+    GOOEY_API_KEY = "sk-F1gcRQFHNabvwORJrlAvYkpnFjGrJUlptcwdmKNRmSFtN5QW"
 
     demo.launch()  # Launches the Gradio app
