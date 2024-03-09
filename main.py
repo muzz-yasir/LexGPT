@@ -119,7 +119,7 @@ demo = gr.Interface(
 
 if __name__ == "__main__":
     # Create OpenAI client and thread to persist throughout session
-    OPENAI_API_KEY='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' #insert key here
+    OPENAI_API_KEY='' #insert key here
     client = create_client()
     print(f'client: {client}')
     assistant = create_assistant(client)
@@ -128,12 +128,12 @@ if __name__ == "__main__":
     print(f'thread: {thread}')
     
     #set elevenlabs api
-    elevenlabs.set_api_key("8b937b9e5eccf5758db8ef7444d115b5") #insert key here
+    elevenlabs.set_api_key("") #insert key here
     voices = elevenlabs.voices()
     LEXVOICE = voices[-1]
 
     #api for animation (GOOEY.AI)
 
-    GOOEY_API_KEY = "sk-F1gcRQFHNabvwORJrlAvYkpnFjGrJUlptcwdmKNRmSFtN5QW"
+    GOOEY_API_KEY = ""
 
     demo.launch()  # Launches the Gradio app
