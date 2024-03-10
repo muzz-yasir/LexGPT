@@ -9,7 +9,9 @@ Our project presents a new paradigm of media consumption in the AI era, as an al
 
 # Architecture 
 
-We have implemented the most crucial components of engaging human-like interaction: listening, thinking, speaking and eye-contact. Users interact via speech and we leverage Whisper, ElevenLabs and OpenAI Assistants API's to generate a realistic Lex Fridman-like response in audio. From here we integrate SOTA research in Computer Vision, by utilising [DreamTalk (Ma et al, 2023)](https://dreamtalk-project.github.io/): a diffusion based model to generate incredibly realistic talking head animation, driven by our Lex audio response, for the output.
+We have implemented the most crucial components of stimulating human-like interaction: listening, thinking, speaking and visualising. Users interact with Lexperience via speech and we leverage Whisper, ElevenLabs and OpenAI Assistants API's to generate a realistic Lex Fridman-like response in audio. From here we integrate SOTA research in Computer Vision, by utilising [DreamTalk (Ma et al, 2023)](https://dreamtalk-project.github.io/): a diffusion based model to generate incredibly realistic talking head animation, driven by our Lex audio response, for the output.
+
+The interaction takes place in Gradio, a GUI for building quick ML prototypes and requires users to press record to chat with Lex, wait for the response and press play on the resulting video. As discussed below, we have much more to say about inference times, but with that aside - extending this to real-time interaction simply requires: a few tweaks in Gradio, appropriate chunking of audio input and pipeline execution and some engaging sample videos to be played whilst the inference takes place.
 
 ![LEXPERIENCE ARCHITECTURE](https://github.com/muzz-yasir/Lexperience/assets/56521243/5aa3954d-4fec-48a3-a7bc-f6985b215319)
 
@@ -40,6 +42,16 @@ https://www.loom.com/share/a3c1fc520ef94f7b9ec0ab35f4262808?sid=4f77125d-ea94-40
 ## Raw output 
 - *Hey Lex, what's your favourite podcast episode and with whom?*
 
-
 https://github.com/muzz-yasir/Lexperience/assets/56521243/ffc11e05-cae7-4f02-8490-2120971c6157
 
+# Ethical Disclaimer
+We do not have permission to clone Lex in this way and we understand the heavy ethical and legal implications this carries. As a rapid prototype, we will make this repository private shortly after submission and think through the various ways we can provide credit and respect to the original creators.
+
+# References
+
+@article{ma2023dreamtalk,
+title={DreamTalk: When Expressive Talking Head Generation Meets Diffusion Probabilistic Models},
+author={Ma, Yifeng and Zhang, Shiwei and Wang, Jiayu and Wang, Xiang and Zhang, Yingya and Deng, Zhidong},
+journal={arXiv preprint arXiv:2312.09767},
+year={2023}
+}
