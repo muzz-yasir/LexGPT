@@ -30,5 +30,7 @@ Lexperience uses a gradio interface to facilitate interaction with the Lex compa
 
 ## Raw output 
 'Hey Lex, what's your favourite podcast episode and with whom?'
+
+
 https://github.com/muzz-yasir/Lexperience/assets/56521243/ffc11e05-cae7-4f02-8490-2120971c6157
 
