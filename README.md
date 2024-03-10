@@ -33,10 +33,12 @@ Supporting this idea is the observation that for a number of similar tools, real
 Lexperience uses a gradio interface to facilitate interaction with the Lex companion. To use the gradio interface, run `gradio main.py` in the command line, then connect to the the localhost it specifies through a browser. By default, this is likely to be http://127.0.0.1:7860/.
 
 # Demo 
+See our loom video!!
 
+https://www.loom.com/share/a3c1fc520ef94f7b9ec0ab35f4262808?sid=4f77125d-ea94-40a8-ada6-f0b6ccc5b500
 
 ## Raw output 
-'Hey Lex, what's your favourite podcast episode and with whom?'
+- *Hey Lex, what's your favourite podcast episode and with whom?*
 
 
 https://github.com/muzz-yasir/Lexperience/assets/56521243/ffc11e05-cae7-4f02-8490-2120971c6157
