@@ -1,5 +1,5 @@
 # @ENCODEHACK JUDGES
-If trying out, ping me for the API keys or to find out more! (mustafa.y36@gmail.com or +44 7873192407)
+If trying out, ping me for the API keys!
 
 # Motivation
 
