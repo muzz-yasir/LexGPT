@@ -3,7 +3,7 @@ If trying out, ping me for the API keys!
 
 # Motivation
 
-Our generation is plagued by passive over-consumption of media. We need new ways to engage in media that uplift us and provide fulfilling interaction with content creators. Lexperience is a first-of-a-kind, end-to-end simulation of the AI researcher and podcast host, Lex Fridman. 
+Our generation is plagued by passive over-consumption of media. We need new ways to engage in media that can uplift us and provide fulfilling interaction with content creators. Lexperience is a first-of-a-kind, end-to-end simulation of the AI researcher and podcast host, Lex Fridman. 
 
 Our project presents a new paradigm of media consumption in the AI era, as an alternative to passive consumption of information dense media; imagine if you could pause a podcast in real-time and query the podcast host about a particular topic? We have taken a step towards this goal by creating a platform to naturally interact with our favourite podcast host in a surprisingly stimulating manner.
 
